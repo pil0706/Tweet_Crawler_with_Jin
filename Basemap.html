@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<<html>
+	<head>
+		<meta charset='utf-8' />
+		<title>Tweet Map for 2017 Korean President Election Ver.1</title>
+		<!-- cdn가지고 맵박스 js랑 css 가져오기 -->
+		<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+		<script src='https://api.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
+		<link href='https://api.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
+		<style>
+			body{margin: 0; padding: 0}
+			#map {position: absolute; top: 0; bottom: 0; width: 100%;}
+		</style>
+	</head>
+	<body>
+			<div id='map'></div>
+			<!--d3를 이용해서 json 파일 불러와기-->
+			<script src='https://d3js.org/d3.v4.min.js' charset='utf-8'></script>
+
+
+
+			<script>
+				mapboxgl.accessToken = 'pk.eyJ1IjoicGlsMDcwNiIsImEiOiJlcWVuRlIwIn0.ywYJJbqo3Rdier4qkejnCg'; //권필 mapbox accessToken
+				var map = new mapboxgl.Map({
+					container: 'map',
+					style: 'mapbox://styles/mapbox/dark-v9',
+					center: [126.98955, 37.5651],	//서울에서 시작하고
+					zoom: 0.5, 						//줌레벨은 11
+					hash: true
+				});
+
+
+				//일단 tweet 대신에 지진 geojson으로
+				var geojson_data = 'http://localhost/tweet_data.geojson'
+
+
+				map.on('load', function(){
+					//geojson으로 가져온 데이터를 source로..
+					d3.json(geojson_data, function(error, data){
+
+						//지진라료라서 earthquakes라고함
+						map.addSource('earthquakes',{
+							type:'geojson',
+							data: data
+						});
+
+						map.addLayer({
+							"id": "earthquake-layer",
+							"type": "circle",
+							"source": 'earthquakes',
+							"paint":{
+								'circle-color': "yellow",
+								'circle-radius': 10,
+							}
+						});
+					})
+				});
+
+
+
+
+/*
+				var candidates = [
+					'문재인',
+					'홍준표',
+					'안철수',
+					'유승민',
+					'심상정'
+				];
+
+				function filterBy(candidate){
+					var filters = ['==']
+				}
+
+				map.addControl(new mapboxgl.NavigationControl()); // 벡터지도 컨트롤 넣기 마우스 오른쪽 버튼 클릭후 돌리면 됨
+
+				map.on('load',function(){
+
+				//권필 apm 셋업에 있는 json tweet가져오기
+				//예제보니까 d3 아작스 리퀘스트 써야하는듯
+				d3.json(
+				//'http://snukumdo.snu.ac.kr/located_tweet.json' 아래 링크는 예제 데이터 -지진
+				'https://www.mapbox.com/mapbox-gl-js/assets/data/significant-earthquakes-2015.geojson', function(err, data){
+					if (err) throw err;
+
+
+					//얘는 month로 필터링하는건데 우리는 문재인/심상정 같이 키워드로 해야할 듯
+					data.features = data.features.map(function(d){
+						d.properties.location = new Loc(d.properties.location).getLatLon();
+						return d;
+					});
+
+					map.addSource('testData',{
+						'type' :'json',
+						'data' : data
+					});
+
+					map.addLayer({
+						'type' : 'circle',
+						'source' : 'testData'
+					});
+				});
+			});
+*/
+
+
+		</script>
+
+
+
+	</body>
+</html>
